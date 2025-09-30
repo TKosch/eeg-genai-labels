@@ -38,7 +38,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="note">Target: <strong>30 ratings per image</strong>. Images stop showing once full.</div>
+    
     <div id="ratingInterface">
       <div id="progress">Loading…</div>
       <img id="imageToRate" src="" alt="Image to rate" />
@@ -264,7 +264,9 @@
   
     // Init
     (async () => {
-      shuffledImages = shuffle([...imagesWithCounts]);
+      // shuffle all, then keep only 40
+      shuffledImages = shuffle([...imagesWithCounts]).slice(0, 40);
+
       try {
         await preload(shuffledImages);
       } catch (e) {
@@ -272,6 +274,7 @@
       }
       loadNextImage();
     })();
+
   </script>
   
  
