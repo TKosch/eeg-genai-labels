@@ -70,7 +70,6 @@
       <p>You have rated all available images. Please click the arrow below to continue.</p>
     </div>
   </div>
-
   <script>
     // ===================== PARAMETERS =====================
     const TARGET_RATINGS = 30;
@@ -203,3 +202,75 @@
       { path: "stimuli/ai_generated/man_filtered/black/men_0198.jpg", count: 26 },
       { path: "stimuli/ai_generated/man_filtered/latino/men_1063.jpg", count:26}
   ]
+  <script>
+
+    let shuffledImages = [];
+    let currentIndex = -1;
+    let currentImage = null;
+  
+    const elImg = document.getElementById("imageToRate");
+    const elSlider = document.getElementById("slider");
+    const elConf = document.getElementById("confidenceSlider");
+    const elNext = document.getElementById("nextButton");
+    const elProgress = document.getElementById("progress");
+    const elRating = document.getElementById("ratingInterface");
+    const elConfirm = document.getElementById("confirmationPage");
+  
+    // Shuffle helper
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+  
+    // Preload images
+    async function preload(paths) {
+      for (const item of paths) {
+        await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = item.path;  // ✅ use .path
+          img.onload = () => { console.log("Preloaded:", item.path); resolve(); };
+          img.onerror = () => { console.error("Failed to load:", item.path); reject(); };
+        });
+      }
+    }
+  
+    // Load the next image
+    function loadNextImage() {
+      currentIndex++;
+      if (currentIndex >= shuffledImages.length) {
+        elRating.classList.add("hidden");
+        elConfirm.classList.remove("hidden");
+        return;
+      }
+      currentImage = shuffledImages[currentIndex];
+      console.log("Loading image:", currentImage.path); // ✅ debug path
+      elImg.src = currentImage.path;  // ✅ assign path
+      elProgress.textContent = `Image ${currentIndex + 1} of ${shuffledImages.length}`;
+      elNext.disabled = true; // disable until slider moved
+    }
+  
+    // Event: enable "Next" when sliders moved
+    elSlider.addEventListener("input", () => elNext.disabled = false);
+    elConf.addEventListener("input", () => elNext.disabled = false);
+  
+    // Event: on "Next"
+    elNext.addEventListener("click", () => {
+      loadNextImage();
+    });
+  
+    // Init
+    (async () => {
+      shuffledImages = shuffle([...imagesWithCounts]);
+      try {
+        await preload(shuffledImages);
+      } catch (e) {
+        console.warn("Some images failed to preload, continuing...");
+      }
+      loadNextImage();
+    })();
+  </script>
+  
+ 
