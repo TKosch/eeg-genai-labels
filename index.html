@@ -263,17 +263,20 @@
     });
   
     // Init
-    (async () => {
-      // shuffle all, then keep only 40
-      shuffledImages = shuffle([...imagesWithCounts]).slice(0, 40);
+  (async () => {
+  // Shuffle all images and select 40 random ones
+    shuffledImages = shuffle([...imagesWithCounts]).slice(0, 40);
 
-      try {
-        await preload(shuffledImages);
-      } catch (e) {
-        console.warn("Some images failed to preload, continuing...");
+  // Show the first one immediately
+    loadNextImage();
+
+      // Start preloading the rest quietly
+      for (let i = 1; i < shuffledImages.length; i++) {
+        const img = new Image();
+        img.src = shuffledImages[i].path;
       }
-      loadNextImage();
-    })();
+  })();
+
 
   </script>
   
