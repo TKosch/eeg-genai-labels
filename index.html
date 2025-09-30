@@ -270,8 +270,19 @@
   
     // Event: on "Next"
     elNext.addEventListener("click", () => {
+      if (currentImage) {
+        window.parent.postMessage({
+          type: "ai_image_rating_data",
+          payload: {
+            image: currentImage.path,
+            rating: elSlider.value,
+            confidence: elConf.value
+          }
+        }, "*");
+      }
       loadNextImage();
     });
+
   
     // Init
   (async () => {
