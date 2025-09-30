@@ -242,10 +242,21 @@
     function loadNextImage() {
       currentIndex++;
       if (currentIndex >= shuffledImages.length) {
-        elRating.classList.add("hidden");
-        elConfirm.classList.remove("hidden");
-        return;
-      }
+      elRating.classList.add("hidden");
+      elConfirm.classList.remove("hidden");
+
+      // ✅ Notify Qualtrics we are done
+      window.parent.postMessage({
+        type: "ai_image_rating_data",
+        payload: {
+          finished: true,
+          participant_id: "done"
+        }
+      }, "*");
+
+  return;
+}
+
       currentImage = shuffledImages[currentIndex];
       console.log("Loading image:", currentImage.path); // ✅ debug path
       elImg.src = currentImage.path;  // ✅ assign path
